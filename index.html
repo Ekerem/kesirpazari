@@ -1,0 +1,128 @@
+<title>Kesir Pazarı</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: kareli defter sayfası üzerinde tek kartlık soru alanı; üstte ilerleme şeridi, altta çözüm notu */
+:root{
+  --paper:#f7f9fc; --grid:#dfe7f2; --ink:#1d2b4f; --muted:#5b6788;
+  --card:#ffffff; --line:#cdd7e6; --accent:#2f5bd3; --marker:#ffe066;
+  --ok:#1f8a4c; --ok-bg:#e3f5ea; --bad:#c43d3d; --bad-bg:#fbe6e6;
+  --display:"Baloo 2","Trebuchet MS",sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141a2a; --grid:#1e2740; --ink:#e8edf8; --muted:#9aa6c4;
+  --card:#1b2338; --line:#2d3958; --accent:#7d9cff; --marker:#8a7420;
+  --ok:#5fd394; --ok-bg:#183626; --bad:#ff8a8a; --bad-bg:#3a1c22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141a2a; --grid:#1e2740; --ink:#e8edf8; --muted:#9aa6c4;
+  --card:#1b2338; --line:#2d3958; --accent:#7d9cff; --marker:#8a7420;
+  --ok:#5fd394; --ok-bg:#183626; --bad:#ff8a8a; --bad-bg:#3a1c22; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:clamp(17px,1.55vw,28px);line-height:1.5;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;min-height:100vh;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px}
+.wrap{max-width:1150px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:800;font-size:2.2em;line-height:1;margin:0;text-wrap:balance}
+h1 span{background:linear-gradient(transparent 55%,var(--marker) 55%);padding:0 4px}
+.sub{color:var(--muted);font-size:.85em;margin:4px 0 0}
+.score{font-family:var(--mono);font-size:1em;background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:6px 12px;font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:6px}
+.dots i{flex:1;height:10px;border-radius:4px;background:var(--line)}
+.dots i.ok{background:var(--ok)} .dots i.bad{background:var(--bad)} .dots i.now{background:var(--accent)}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:22px;box-shadow:5px 5px 0 var(--ink);display:flex;flex-direction:column;gap:16px}
+.tag{font-size:.8em;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.q{font-size:1.35em;font-weight:600;margin:0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:480px){.opts{grid-template-columns:1fr}}
+.opt{font:inherit;font-weight:800;font-size:1.2em;text-align:left;cursor:pointer;color:var(--ink);background:var(--paper);
+  border:2px solid var(--line);border-radius:10px;padding:.8em 1em;min-height:3.2em;display:flex;gap:.6em;align-items:center;transition:transform .1s,border-color .1s}
+.opt b{font-family:var(--mono);font-weight:500;font-size:.8rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.opt:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)} .opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.note{border-radius:10px;padding:.8em 1em;font-size:1.05em}
+.note.ok{background:var(--ok-bg)} .note.bad{background:var(--bad-bg)}
+.note strong{display:block;margin-bottom:2px}
+.note code{font-family:var(--mono);font-size:.95em}
+.btn{font-family:var(--display);font-weight:800;font-size:1.25em;min-height:2.6em;cursor:pointer;align-self:flex-end;color:#fff;background:var(--accent);border:2px solid var(--ink);border-radius:10px;padding:.3em 1.2em;box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.big{font-family:var(--display);font-weight:800;font-size:3.4rem;line-height:1;margin:0}
+.review{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.review li{border-left:4px solid var(--bad);padding:2px 0 2px 12px;font-size:.85em}
+.review{display:grid!important;grid-template-columns:1fr 1fr;gap:8px 20px!important}@media (max-width:700px){.review{grid-template-columns:1fr}}
+.top{display:flex;gap:10px;align-items:center}.fs{font:inherit;font-size:.85em;font-weight:800;cursor:pointer;color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:6px 12px;min-height:2.4em}
+.review li.ok{border-color:var(--ok)}
+.muted{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1><span>Kesir Pazarı</span></h1>
+      <p class="sub">Kesir · Ondalık · Yüzde — gerçek hayat problemleri</p>
+    </div>
+    <div class="top"><button class="fs" id="fs">⛶ Tam ekran</button><div class="score" id="score">Puan: 0</div></div>
+  </header>
+  <div class="dots" id="dots"></div>
+  <section class="card" id="card" aria-live="polite"></section>
+</div>
+
+<script>
+const Q=[
+ {t:"Kesir",q:"Ayşe 24 TL harçlığının 3/8'i ile kitap aldı. Kitaba kaç TL verdi?",o:["9 TL","8 TL","12 TL","15 TL"],c:0,s:"24 ÷ 8 = 3, sonra 3 × 3 = <code>9 TL</code>"},
+ {t:"Ondalık",q:"Elmanın kilosu 18,40 TL. Annem 2,5 kg elma aldı. Kaç TL ödedi?",o:["46 TL","45,60 TL","36,80 TL","43 TL"],c:0,s:"18,40 × 2,5 = <code>46 TL</code>"},
+ {t:"Yüzde",q:"30 kişilik sınıfın %40'ı kız öğrencidir. Sınıfta kaç kız öğrenci vardır?",o:["12","18","10","14"],c:0,s:"30'un %10'u 3 eder. %40'ı ise 3 × 4 = <code>12</code>"},
+ {t:"Kesir + Ondalık",q:"1,5 litrelik şişedeki suyun 3/5'ini içtim. Şişede kaç litre su kaldı?",o:["0,6 L","0,9 L","0,5 L","1,2 L"],c:0,s:"Kalan kısım 2/5. 1,5 ÷ 5 = 0,3 ve 0,3 × 2 = <code>0,6 L</code>"},
+ {t:"Yüzde",q:"250 TL'lik ayakkabıda %20 indirim var. İndirimli fiyat kaç TL?",o:["200 TL","230 TL","50 TL","180 TL"],c:0,s:"İndirim: 250'nin %20'si = 50 TL. 250 − 50 = <code>200 TL</code>"},
+ {t:"Ondalık",q:"Ali tanesi 12,75 TL olan 3 defter aldı ve kasaya 100 TL verdi. Kaç TL para üstü aldı?",o:["61,75 TL","62,25 TL","38,25 TL","87,25 TL"],c:0,s:"3 × 12,75 = 38,25 TL. 100 − 38,25 = <code>61,75 TL</code>"},
+ {t:"Ondalık",q:"4,8 metrelik kurdele 6 eşit parçaya kesildi. Her parça kaç metre?",o:["0,8 m","0,08 m","8 m","1,2 m"],c:0,s:"4,8 ÷ 6 = <code>0,8 m</code>"},
+ {t:"Kesir",q:"120 sayfalık kitabın Pazartesi 1/4'ünü, Salı 1/3'ünü okudum. Kaç sayfa okumadım?",o:["50","70","60","40"],c:0,s:"1/4 → 30 sayfa, 1/3 → 40 sayfa. 30 + 40 = 70. 120 − 70 = <code>50 sayfa</code>"},
+ {t:"Kesir + Yüzde",q:"Bahçenin %25'ine domates, 3/10'una biber ekildi. Kalan kısma çiçek ekildi. Çiçekli kısım bahçenin yüzde kaçı?",o:["%45","%55","%50","%35"],c:0,s:"3/10 = %30. %25 + %30 = %55. %100 − %55 = <code>%45</code>"},
+ {t:"Karşılaştırma",q:"80 TL'lik tişört A mağazasında %25, B mağazasında 1/5 indirimli. Hangisi daha ucuz ve kaç TL fark var?",o:["A, 4 TL","B, 4 TL","A, 20 TL","İkisi eşit"],c:0,s:"A: 80'in %25'i = 20 → 60 TL. B: 80'in 1/5'i = 16 → 64 TL. <code>A daha ucuz, fark 4 TL</code>"},
+ {t:"İşlem seçme",q:"Annem 3/4 kg peyniri 3 kaba eşit olarak paylaştırdı. Her kaba konan peyniri bulmak için hangi işlemi yapmalıyız?",o:["3/4 ÷ 3","3/4 × 3","3 − 3/4","3/4 + 3"],c:0,s:"Eşit paylaştırma bölme işlemidir: 3/4 ÷ 3 = <code>1/4 kg</code>"},
+ {t:"Tahmin",q:"Market fişinde 19,90 TL, 29,90 TL ve 49,90 TL var. Toplam tutar en çok hangisine yakındır?",o:["100 TL","80 TL","120 TL","90 TL"],c:0,s:"Yuvarlayalım: 20 + 30 + 50 = 100. Gerçek toplam 99,70 TL → <code>yaklaşık 100 TL</code>"}
+];
+const L=["A","B","C","D"];
+let i=0,score=0,res=[],order=[];
+const $=id=>document.getElementById(id);
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function dots(){$("dots").innerHTML=Q.map((_,k)=>`<i class="${res[k]===true?"ok":res[k]===false?"bad":k===i?"now":""}"></i>`).join("");$("score").textContent="Puan: "+score}
+function show(){
+  dots();const q=Q[i];order=shuffle([0,1,2,3]);
+  $("card").innerHTML=`<div class="tag">Soru ${i+1} / ${Q.length} · ${q.t}</div>
+   <p class="q">${q.q}</p>
+   <div class="opts">${order.map((o,k)=>`<button class="opt" id="o${k}" data-k="${k}"><b>${L[k]}</b>${q.o[o]}</button>`).join("")}</div>
+   <div id="fb"></div>`;
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+}
+function pick(k){
+  if(res[i]!==undefined)return;
+  const q=Q[i],ok=order[k]===q.c;res[i]=ok;if(ok)score+=10;
+  document.querySelectorAll(".opt").forEach((b,n)=>{b.disabled=true;if(order[n]===q.c)b.classList.add("right");else if(n===k)b.classList.add("wrong")});
+  $("fb").innerHTML=`<div class="note ${ok?"ok":"bad"}"><strong>${ok?"Doğru! +10 puan":"Yanlış. Doğru cevap: "+q.o[q.c]}</strong>Çözüm: ${q.s}</div>`;
+  const n=document.createElement("button");n.className="btn";n.id="next";n.textContent=i<Q.length-1?"Sonraki soru →":"Sonucu gör";
+  n.onclick=()=>{i++;i<Q.length?show():end()};$("card").appendChild(n);n.focus();dots();
+}
+function end(){
+  i=-1;dots();const right=res.filter(Boolean).length;
+  const msg=right>=9?"Harika! Konuya çok iyi hâkimsin.":right>=7?"Çok iyi! Birkaç küçük eksik var.":right>=5?"İyi gidiyorsun, yanlışların çözümüne tekrar bak.":"Konuyu tekrar edip yeniden dene.";
+  $("card").innerHTML=`<div class="tag">Oyun bitti</div><p class="big">${score} puan</p>
+   <p class="q">${right} / ${Q.length} doğru. ${msg}</p>
+   <ul class="review">${Q.map((q,k)=>`<li class="${res[k]?"ok":""}"><strong>${k+1}.</strong> ${res[k]?"✓":"✗"} <span class="muted">${q.s.replace(/<[^>]+>/g,"")}</span></li>`).join("")}</ul>
+   <button class="btn" id="again">Tekrar oyna</button>`;
+  $("again").onclick=()=>{i=0;score=0;res=[];show()};
+}
+document.addEventListener("keydown",e=>{
+  const k="1234".indexOf(e.key);if(k>=0&&i>=0&&res[i]===undefined)pick(k);
+  else if(e.key==="Enter"&&$("next"))$("next").click();
+});
+$("fs").onclick=()=>{try{const d=document,e=d.documentElement;(d.fullscreenElement?d.exitFullscreen():(e.requestFullscreen||e.webkitRequestFullscreen).call(e))?.catch?.(()=>{})}catch(_){}};
+show();
+</script>
