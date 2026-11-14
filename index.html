@@ -64,6 +64,9 @@ h1 span{background:linear-gradient(transparent 55%,var(--marker) 55%);padding:0 
 .review li.ok{border-color:var(--ok)}
 .muted{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.konu{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.konu span{padding:6px 12px;border-radius:999px;border:2px solid #c9d3e6;font-weight:700;font-size:.95em;background:#fff}
+.konu span.ok{border-color:#1f9d55}.konu span.mid{border-color:#e6a100}.konu span.bad{border-color:#d93a4a}
 </style>
 
 <div class="wrap">
@@ -119,6 +122,8 @@ function end(){
   const msg=right>=9?"Harika! Konuya çok iyi hâkimsin.":right>=7?"Çok iyi! Birkaç küçük eksik var.":right>=5?"İyi gidiyorsun, yanlışların çözümüne tekrar bak.":"Konuyu tekrar edip yeniden dene.";
   $("card").innerHTML=`<div class="tag">Oyun bitti</div><p class="big">${score} puan</p>
    <p class="q">${right} / ${Q.length} doğru. ${msg}</p>
+   ${(()=>{const by={};Q.forEach((q,k)=>q.t.split(" + ").forEach(t=>{const b=by[t]||(by[t]={n:0,ok:0});b.n++;if(res[k])b.ok++}));
+     return `<p class="konu">${Object.entries(by).map(([t,b])=>`<span class="${b.ok===b.n?"ok":b.ok*2>=b.n?"mid":"bad"}">${t} <b>${b.ok}/${b.n}</b></span>`).join("")}</p>`})()}
    <ul class="review">${Q.map((q,k)=>`<li class="${res[k]?"ok":""}"><strong>${k+1}.</strong> ${res[k]?"✓":"✗"} <span class="muted">${q.s.replace(/<[^>]+>/g,"")}</span></li>`).join("")}</ul>
    <button class="btn" id="again">Tekrar oyna</button>`;
   $("again").onclick=()=>{i=0;score=0;res=[];show()};
@@ -143,7 +148,7 @@ show();
 <div class="mbu-sig">Made by Us</div>
 <script>
 (function(){
-  const APP_VERSION='1.1.0';
+  const APP_VERSION='1.2.0';
   const PAGE_URL='https://ekerem.github.io/kesirpazari/';
   const btn=document.getElementById('mbuUpd');
   let tEl=null,tTimer=0;
